@@ -38,7 +38,11 @@ Plan: `docs/PLAN.md`. On 2026-11-16 the user asked for all phases to run without
   - Scenarios (`ganga/scenario.py`): plant offline, load change, rain, low flow, spill; each tested to move in the expected direction.
   - Investment analysis (`data/curated/investment.json`): measured 2016–19 vs 2023–26 below Kanpur, Prayagraj, Varanasi, next to the model with loads held at their 2016 level.
   - Ask (`ganga/assistant.py`): Claude with lookup tools when credentials exist; **the Claude path has not been run** (no API key here). The built-in fallback is tested against the API's numbers.
-- [ ] **Phase 8 — Deploy and document.** README, Dockerfile, `docker-compose.prod.yml`, daily and backup scripts are written. **Not done:** the image has not been built, nothing is deployed, and the Notion services registry is untouched — deployment to the Oracle server needs the user's go-ahead.
+- [x] **Phase 8 — Deploy and document** (2026-11-17). Live at https://ganga.kravlone.xyz on the Oracle server (`/opt/deployment/ganga`, Traefik labels in `docker-compose.yml`; local database is now `docker-compose.dev.yml`).
+  - Database filled with `seed-export` / `seed-import`; forecast run issued on the server for 2026-11-17. Worker container runs the daily job at 06:30 IST (first unattended run not yet observed).
+  - Ask tab uses Gemini (`GANGA_GEMINI_API_KEY` in the server `.env`, model `gemini-2.5-flash`); falls back to the built-in responder when the key's quota is exhausted.
+  - Laptop backup script and RESTORE.md extended for the ganga database; Notion deployment and backup pages updated. The extended backup script has not been run end to end.
+  - Update: `ssh technetium 'cd /opt/deployment/ganga && git pull && docker compose up -d --build'`.
 
 ## Changes to the plan from what the data showed
 - Calibrated core is Bijnor → Ghazipur/Buxar (UP monthly data), not just Kanpur → Varanasi.
