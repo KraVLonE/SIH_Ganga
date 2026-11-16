@@ -10,6 +10,7 @@ RUN npm run build
 FROM python:3.13-slim
 ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends tzdata && rm -rf /var/lib/apt/lists/*
 # Runtime only needs the model, API and ingestion of drivers; OCR and satellite tooling
 # (used to build the curated data) are not installed in the image.
 RUN pip install "pydantic-settings>=2.4" "psycopg[binary]>=3.2" "httpx>=0.27" "numpy>=2.1" \

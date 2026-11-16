@@ -415,7 +415,7 @@ def mount_frontend(application: FastAPI, dist: Path = ROOT / "web" / "dist") -> 
         return
     application.mount("/assets", StaticFiles(directory=dist / "assets"), name="assets")
 
-    @application.get("/{path:path}", include_in_schema=False)
+    @application.api_route("/{path:path}", methods=["GET", "HEAD"], include_in_schema=False)
     def spa(path: str):
         target = dist / path
         return FileResponse(target if path and target.is_file() else dist / "index.html")

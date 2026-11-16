@@ -3,6 +3,7 @@
 # GANGA_GEMINI_API_KEY, ANTHROPIC_API_KEY, GANGA_TELEGRAM_TOKEN, GANGA_TELEGRAM_CHAT.
 # Local development uses docker-compose.dev.yml (database only).
 x-env: &env
+  TZ: Asia/Kolkata  # forecast dates follow Indian time
   GANGA_DB_HOST: db
   GANGA_DB_PORT: "5432"
   GANGA_DB_USER: ganga
