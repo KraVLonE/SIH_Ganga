@@ -1,0 +1,34 @@
+slug,name,kind,lon,lat,note
+haridwar,Haridwar,node,78.171,29.956,upstream boundary
+bijnor,Bijnor barrage,node,78.041,29.373,
+garhmukteshwar,Garhmukteshwar,node,78.146,28.763,
+anupshahr,Anupshahr,node,78.270,28.357,
+narora,Narora,node,78.397,28.190,
+kachhla,Kachhla,node,78.862,27.933,
+farrukhabad,Farrukhabad,node,79.627,27.401,
+ramganga,Ramganga confluence,confluence,79.855,27.178,approximate position
+kali,Kali (East) confluence,confluence,80.020,27.015,approximate position
+kannauj,Kannauj,node,80.050,26.990,below Ramganga and Kali
+bithoor,Bithoor,node,80.275,26.613,
+kanpur_us,Kanpur upstream,node,80.320,26.500,
+kanpur_ds,Kanpur downstream (Jajmau),node,80.420,26.431,
+dalmau,Dalmau,node,81.030,26.060,
+kalakankar,Kalakankar,node,81.360,25.860,
+prayagraj_us,Prayagraj upstream (Rasoolabad),node,81.854428,25.503263,CPCB station 1046
+yamuna,Yamuna confluence (Sangam),confluence,81.888,25.425,
+prayagraj_ds,Prayagraj downstream,node,81.980,25.380,below Yamuna
+tons,Tons (Tamsa) confluence,confluence,82.080,25.270,approximate position
+vindhyachal,Vindhyachal,node,82.505,25.165,
+mirzapur,Mirzapur,node,82.580,25.155,
+chunar,Chunar,node,82.870,25.125,
+varanasi_us,Varanasi upstream (Assi),node,83.006,25.283,
+varanasi_ds,Varanasi downstream,node,83.040,25.325,
+gomti,Gomti confluence,confluence,83.170,25.510,approximate position
+saidpur,Saidpur,node,83.220,25.537,below Gomti
+ghazipur,Ghazipur,node,83.580,25.578,
+buxar,Buxar,node,83.975,25.575,
+ballia,Ballia,node,84.170,25.720,
+ghaghara,Ghaghara confluence,confluence,84.700,25.740,approximate position
+doriganj,Doriganj,node,84.830,25.720,below Ghaghara
+son,Son confluence,confluence,84.870,25.700,approximate position
+patna,Patna (Gandhi Ghat),node,85.168,25.622,downstream boundary

@@ -1,0 +1,11 @@
+{
+ "file": "wb_rwq_jan2216.pdf",
+ "url": "http://web.archive.org/web/20170808010947id_/http://uppcb.com:80/pdf/rwq_jan2216.pdf",
+ "month": null,
+ "month_source": "",
+ "method": "ocr-salvaged",
+ "notes": [
+  "damaged file (PdfminerException): 2 page image(s) recovered, rest lost"
+ ],
+ "rows": []
+}

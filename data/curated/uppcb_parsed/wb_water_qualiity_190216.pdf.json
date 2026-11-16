@@ -1,0 +1,11 @@
+{
+ "file": "wb_water_qualiity_190216.pdf",
+ "url": "http://web.archive.org/web/20170808010735id_/http://uppcb.com:80/pdf/water_qualiity_190216.pdf",
+ "month": "2016-01-01",
+ "month_source": "file name",
+ "method": "ocr-salvaged",
+ "notes": [
+  "damaged file (PdfminerException): 2 page image(s) recovered, rest lost"
+ ],
+ "rows": []
+}

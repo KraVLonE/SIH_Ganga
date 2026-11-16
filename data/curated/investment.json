@@ -1,0 +1,124 @@
+{
+ "note": "Measured columns compare laboratory results just downstream of each city in 2016-19 and 2023-26 (mean BOD, median coliform); they also reflect differences in river flow between the periods. The model columns are for 2023-26: 'with' is the calibrated model; 'without' keeps sewage loads at their 2016 level. The 2016 level is a single fitted factor (2.5x for towns, 2.3x for diffuse sources), not an account of individual plants, so treat the split as indicative.",
+ "load_2016": 2.538927768048623,
+ "diffuse_2016": 2.326614647062522,
+ "clusters": [
+  {
+   "name": "Kanpur",
+   "station": "1068",
+   "station_name": "RIVER GANGA AT KANPUR D/S (JANA VILLAGE), U.P",
+   "observed": {
+    "bod": {
+     "before": 5.816666666666666,
+     "after": 3.9697674418604656,
+     "n_before": 36,
+     "n_after": 43
+    },
+    "fc": {
+     "before": 26500.0,
+     "after": 43000.0,
+     "n_before": 36,
+     "n_after": 39
+    },
+    "do": {
+     "before": 6.35625,
+     "after": 7.804651162790698,
+     "n_before": 32,
+     "n_after": 43
+    }
+   },
+   "modelled": {
+    "bod": {
+     "with_investment": 2.7092520193088467,
+     "without_investment": 4.06585928730454
+    },
+    "fc": {
+     "with_investment": 4994.05328533344,
+     "without_investment": 11836.527519157751
+    },
+    "do": {
+     "with_investment": 7.862038302568095,
+     "without_investment": 7.662205218044514
+    }
+   }
+  },
+  {
+   "name": "Prayagraj",
+   "station": "1049",
+   "station_name": "RIVER GANGA AT PRAYAGRAJ D/S (SANGAM), U.P.",
+   "observed": {
+    "bod": {
+     "before": 4.208333333333333,
+     "after": 2.738095238095238,
+     "n_before": 36,
+     "n_after": 42
+    },
+    "fc": {
+     "before": 11000.0,
+     "after": 930.0,
+     "n_before": 36,
+     "n_after": 41
+    },
+    "do": {
+     "before": 8.2625,
+     "after": 8.171428571428573,
+     "n_before": 32,
+     "n_after": 42
+    }
+   },
+   "modelled": {
+    "bod": {
+     "with_investment": 2.64430957586662,
+     "without_investment": 3.500199091675668
+    },
+    "fc": {
+     "with_investment": 3581.933661396958,
+     "without_investment": 7711.899858822219
+    },
+    "do": {
+     "with_investment": 7.900164622114245,
+     "without_investment": 7.796121059728658
+    }
+   }
+  },
+  {
+   "name": "Varanasi",
+   "station": "1071",
+   "station_name": "RIVER GANGA AT VARANASI D/S , A/C RIVER VARUNA , U.P",
+   "observed": {
+    "bod": {
+     "before": 4.928571428571429,
+     "after": 3.595,
+     "n_before": 35,
+     "n_after": 40
+    },
+    "fc": {
+     "before": 23000.0,
+     "after": 7900.0,
+     "n_before": 35,
+     "n_after": 40
+    },
+    "do": {
+     "before": 6.909677419354839,
+     "after": 7.340000000000001,
+     "n_before": 31,
+     "n_after": 40
+    }
+   },
+   "modelled": {
+    "bod": {
+     "with_investment": 2.7108763184385234,
+     "without_investment": 3.9443418204149343
+    },
+    "fc": {
+     "with_investment": 5205.506470505963,
+     "without_investment": 12521.656348868099
+    },
+    "do": {
+     "with_investment": 7.841031604734677,
+     "without_investment": 7.631341342363354
+    }
+   }
+  }
+ ]
+}
