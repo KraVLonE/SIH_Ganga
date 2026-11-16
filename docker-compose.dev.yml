@@ -1,0 +1,21 @@
+services:
+  db:
+    # TimescaleDB + PostGIS in one image
+    image: timescale/timescaledb-ha:pg17
+    environment:
+      POSTGRES_USER: ${GANGA_DB_USER:-ganga}
+      POSTGRES_PASSWORD: ${GANGA_DB_PASSWORD:-ganga}
+      POSTGRES_DB: ${GANGA_DB_NAME:-ganga}
+    ports:
+      - "127.0.0.1:${GANGA_DB_PORT:-5544}:5432"
+    volumes:
+      - dbdata:/home/postgres/pgdata
+      - ./ganga/db/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GANGA_DB_USER:-ganga} -d ${GANGA_DB_NAME:-ganga}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  dbdata:

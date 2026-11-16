@@ -1,8 +1,9 @@
 """Question answering over the forecast ("adaptive, query-based" use of the system).
 
-With Anthropic credentials configured, Claude answers by calling the lookup tools below, so
-every number it quotes comes from the database. Without credentials, a simple built-in
-responder uses the same lookups for the common questions (a place's outlook, the worst stretch).
+A language model answers by calling the lookup tools below, so every number it quotes comes
+from the database. Gemini is used when GANGA_GEMINI_API_KEY is set, otherwise Claude when
+Anthropic credentials are configured. With neither, a simple built-in responder uses the same
+lookups for the common questions (a place's outlook, the worst stretch).
 """
 
 import difflib
@@ -262,6 +263,48 @@ def ask_claude(question: str) -> dict:
     return {"answer": text or "No answer was produced.", "used": used, "engine": "claude"}
 
 
+GEMINI_FALLBACK_MODEL = "gemini-2.5-flash-lite"
+
+
+def ask_gemini(question: str, api_key: str, model: str) -> dict:
+    """Answer with Gemini and the lookup tools (the SDK runs the tool calls itself)."""
+    import functools
+
+    from google import genai
+    from google.genai import types
+
+    used: list[str] = []
+
+    def tracked(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            used.append(fn.__name__)
+            return fn(*args, **kwargs)
+
+        return wrapper
+
+    # Tool calling is served by the v1beta API.
+    client = genai.Client(api_key=api_key, http_options=types.HttpOptions(api_version="v1beta"))
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM,
+        tools=[tracked(fn) for fn in TOOLS],
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(maximum_remote_calls=8),
+        max_output_tokens=2000,
+    )
+    last_error: Exception | None = None
+    for name in dict.fromkeys((model, GEMINI_FALLBACK_MODEL)):
+        try:
+            response = client.chats.create(model=name, config=config).send_message(question)
+        except Exception as exc:  # unknown model, quota, network: try the next, then give up
+            last_error = exc
+            used.clear()
+            continue
+        text = (response.text or "").strip()
+        if text:
+            return {"answer": text, "used": used, "engine": f"gemini:{name}"}
+    raise RuntimeError(f"Gemini did not answer: {last_error!r}")
+
+
 def _describe(day: dict) -> list[str]:
     parts = []
     for v in ("fc", "bod", "do"):
@@ -344,6 +387,13 @@ def ask(question: str) -> dict:
             "used": [],
             "engine": "builtin",
         }
+    from ganga.config import settings
+
+    if settings.gemini_api_key:
+        try:
+            return ask_gemini(question, settings.gemini_api_key, settings.gemini_model)
+        except Exception:
+            return ask_builtin(question)
     try:
         import anthropic
     except ImportError:

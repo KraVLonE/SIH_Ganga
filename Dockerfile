@@ -13,7 +13,7 @@ WORKDIR /app
 # Runtime only needs the model, API and ingestion of drivers; OCR and satellite tooling
 # (used to build the curated data) are not installed in the image.
 RUN pip install "pydantic-settings>=2.4" "psycopg[binary]>=3.2" "httpx>=0.27" "numpy>=2.1" \
-    "scipy>=1.14" "fastapi>=0.115" "uvicorn>=0.30" "anthropic>=1.1" "shapely>=2.0" "pyproj>=3.6"
+    "scipy>=1.14" "fastapi>=0.115" "uvicorn>=0.30" "anthropic>=1.1" "google-genai>=1.0" "shapely>=2.0" "pyproj>=3.6"
 COPY ganga/ ganga/
 COPY data/curated/ data/curated/
 COPY scripts/ scripts/

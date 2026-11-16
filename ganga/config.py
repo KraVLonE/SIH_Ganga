@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     db_name: str = "ganga"
     db_host: str = "127.0.0.1"
     db_port: int = 5544
+    # Optional: lets the Ask tab answer with Gemini (GANGA_GEMINI_API_KEY).
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
 
     @property
     def db_dsn(self) -> str:

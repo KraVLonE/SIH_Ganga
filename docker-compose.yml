@@ -1,21 +1,71 @@
+# Production on the Oracle server, behind the shared Traefik proxy (network: traefik-public).
+# Needs a .env next to this file (not committed) with POSTGRES_PASSWORD=... and, optionally,
+# GANGA_GEMINI_API_KEY, ANTHROPIC_API_KEY, GANGA_TELEGRAM_TOKEN, GANGA_TELEGRAM_CHAT.
+# Local development uses docker-compose.dev.yml (database only).
+x-env: &env
+  GANGA_DB_HOST: db
+  GANGA_DB_PORT: "5432"
+  GANGA_DB_USER: ganga
+  GANGA_DB_NAME: ganga
+  GANGA_DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+  GANGA_GEMINI_API_KEY: ${GANGA_GEMINI_API_KEY:-}
+  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+  GANGA_TELEGRAM_TOKEN: ${GANGA_TELEGRAM_TOKEN:-}
+  GANGA_TELEGRAM_CHAT: ${GANGA_TELEGRAM_CHAT:-}
+
 services:
+  app:
+    build: .
+    image: ganga-app
+    restart: unless-stopped
+    environment: *env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - traefik-public
+      - default
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.ganga.rule=Host(`ganga.kravlone.xyz`)"
+      - "traefik.http.routers.ganga.entrypoints=websecure"
+      - "traefik.http.routers.ganga.tls.certresolver=letsencrypt"
+      - "traefik.http.services.ganga.loadbalancer.server.port=8010"
+
+  # Pulls new flow and weather and issues the forecast once a day (06:30 IST).
+  worker:
+    image: ganga-app
+    restart: unless-stopped
+    environment: *env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["python", "scripts/scheduler.py"]
+    networks:
+      - default
+
   db:
-    # TimescaleDB + PostGIS in one image
     image: timescale/timescaledb-ha:pg17
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${GANGA_DB_USER:-ganga}
-      POSTGRES_PASSWORD: ${GANGA_DB_PASSWORD:-ganga}
-      POSTGRES_DB: ${GANGA_DB_NAME:-ganga}
-    ports:
-      - "127.0.0.1:${GANGA_DB_PORT:-5544}:5432"
+      POSTGRES_USER: ganga
+      POSTGRES_DB: ganga
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
     volumes:
       - dbdata:/home/postgres/pgdata
       - ./ganga/db/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${GANGA_DB_USER:-ganga} -d ${GANGA_DB_NAME:-ganga}"]
+      test: ["CMD-SHELL", "pg_isready -U ganga -d ganga"]
       interval: 5s
       timeout: 3s
       retries: 20
+    networks:
+      - default
 
 volumes:
   dbdata:
+
+networks:
+  traefik-public:
+    external: true

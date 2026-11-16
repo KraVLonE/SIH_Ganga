@@ -42,7 +42,7 @@ A decision-support system for the Ganga between Haridwar and Patna (1,369 km): d
 ## Run it locally
 
 ```sh
-docker compose up -d                       # database on 127.0.0.1:5544
+docker compose -f docker-compose.dev.yml up -d   # database on 127.0.0.1:5544
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
 .venv/bin/python -m ganga.cli migrate
 .venv/bin/python -m ganga.cli network      # needs data/raw/osm/ganga.json
@@ -61,12 +61,25 @@ Tests and lint: `.venv/bin/pytest` and `.venv/bin/ruff check .`
 
 ## Deploy
 
-`docker-compose.prod.yml` runs the database, the app (API + dashboard on `127.0.0.1:8010`, for a reverse proxy), a worker that runs `scripts/daily.sh` at 06:30 IST, and a nightly database dump into `./backups`. Copy `.env.example` to `.env` and set a database password. A fresh database must be loaded once (`migrate`, `network`, `pick-cells`, `backfill`, `observations`) before the first forecast.
+`docker-compose.yml` is the server stack: the app (API + dashboard) behind a shared Traefik proxy at `ganga.kravlone.xyz`, a worker that runs `scripts/daily.sh` at 06:30 IST, and the database on a private network. It needs a `.env` beside it with `POSTGRES_PASSWORD` (see `.env.example`).
+
+```sh
+# on a machine that already has the data loaded
+.venv/bin/python -m ganga.cli seed-export seed        # CSVs of network, drivers, measurements
+
+# on the server
+git clone https://github.com/KraVLonE/SIH_Ganga.git ganga && cd ganga
+umask 077; printf "POSTGRES_PASSWORD=%s\n" "$(openssl rand -hex 24)" > .env
+docker compose up -d --build --wait db
+docker compose run --rm -v ./seed:/seed app python -m ganga.cli seed-import /seed   # after copying seed/ over
+docker compose run --rm app sh scripts/daily.sh       # first forecast
+docker compose up -d --build
+```
 
 Optional settings in `.env`:
 
+- `GANGA_GEMINI_API_KEY` or `ANTHROPIC_API_KEY` — the Ask tab answers with Gemini (checked first) or Claude, using lookup tools over the forecast; with neither, or when the provider fails or is out of quota, a built-in responder handles place and "where is it worst" questions.
 - `GANGA_TELEGRAM_TOKEN`, `GANGA_TELEGRAM_CHAT` — send alert digests to Telegram.
-- `ANTHROPIC_API_KEY` — the Ask tab answers with Claude using lookup tools over the forecast; without it a built-in responder handles place and "where is it worst" questions.
 
 ## Data sources
 

@@ -127,13 +127,29 @@ def hindcast(_args) -> None:
     run()
 
 
+def seed_export(args) -> None:
+    from ganga.db.seed import export_seed
+
+    with connect() as conn:
+        export_seed(conn, Path(args.dir))
+
+
+def seed_import(args) -> None:
+    from ganga.db.seed import import_seed
+
+    with connect() as conn:
+        conn.execute(SCHEMA.read_text())
+        import_seed(conn, Path(args.dir))
+
+
 def serve(args) -> None:
     import uvicorn
 
     from ganga.api.app import app, mount_frontend
 
     mount_frontend(app)
-    uvicorn.run(app, host=args.host, port=args.port)
+    # Behind the reverse proxy: trust its forwarded scheme and client address.
+    uvicorn.run(app, host=args.host, port=args.port, proxy_headers=True, forwarded_allow_ips="*")
 
 
 def main() -> None:
@@ -168,6 +184,13 @@ def main() -> None:
     sub.add_parser("verify", help="score stored forecasts against later measurements").set_defaults(
         fn=verify
     )
+    for name, fn, text in (
+        ("seed-export", seed_export, "write loaded data to CSV files"),
+        ("seed-import", seed_import, "load CSV files into an empty database"),
+    ):
+        sp = sub.add_parser(name, help=text)
+        sp.add_argument("dir")
+        sp.set_defaults(fn=fn)
     sv = sub.add_parser("serve", help="run the API (and built dashboard)")
     sv.add_argument("--host", default="127.0.0.1")
     sv.add_argument("--port", type=int, default=8010)

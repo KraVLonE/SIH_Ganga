@@ -6,3 +6,6 @@ data/raw
 backups
 .git
 **/__pycache__
+seed
+.env
+tests
